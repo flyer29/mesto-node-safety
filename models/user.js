@@ -29,10 +29,12 @@ const userSchema = new mongoose.Schema({
       message: (props) => `Email ${props.value} не проходит валидацию!`,
     },
     unique: true,
+    required: true,
   },
   password: {
     type: String,
     minlength: 8,
+    required: true,
   },
 });
 
