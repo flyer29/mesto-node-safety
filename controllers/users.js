@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 const getUsers = (req, res) => {
@@ -26,23 +27,29 @@ const createUser = (req, res) => {
     about,
     avatar,
     email,
-    password,
   } = req.body;
-
-  User.create({
-    name,
-    about,
-    avatar,
-    email,
-    password,
-  })
-    .then((user) => res.send(user))
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+        .then((user) => {
+          res.send(user);
+        })
+        .catch((err) => res.status(401).send({ message: err/* 'Ошибка авторизации' */ }));
+    })
     .catch((err) => {
       if (err._message === 'user validation failed') {
         res.status(400).send({ message: err.message });
         return;
       }
-      res.status(500).send({ message: 'На сервере произошла ошибка' });
+      if (err._message === '') {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
     });
 };
 
