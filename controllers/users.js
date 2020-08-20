@@ -27,8 +27,9 @@ const createUser = (req, res) => {
     about,
     avatar,
     email,
+    password,
   } = req.body;
-  bcrypt.hash(req.body.password, 10)
+  bcrypt.hash(password, 10)
     .then((hash) => {
       User.create({
         name,
@@ -40,16 +41,29 @@ const createUser = (req, res) => {
         .then((user) => {
           res.send(user);
         })
-        .catch((err) => res.status(401).send({ message: err/* 'Ошибка авторизации' */ }));
+        .catch((err) => {
+          if (err._message === 'user validation failed') {
+            res.status(400).send({ message: err.message });
+            return;
+          }
+          if (err._message === '') {
+            res.status(500).send({ message: 'На сервере произошла ошибка' });
+          }
+        });
     })
     .catch((err) => {
-      if (err._message === 'user validation failed') {
-        res.status(400).send({ message: err.message });
-        return;
-      }
-      if (err._message === '') {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
-      }
+      res.send({ message: err });
+    });
+};
+
+const login = (req, res) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials({ email, password })
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
     });
 };
 
@@ -97,4 +111,5 @@ module.exports = {
   createUser,
   updateProfile,
   updateAvatar,
+  login,
 };
