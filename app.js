@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cardsRouter = require('./routes/cards.js');
 const usersRouter = require('./routes/users.js');
+const { createUser, login } = require('./controllers/users.js');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -29,5 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(getTemporaryId);
 app.use('/cards', cardsRouter);
 app.use('/users', usersRouter);
+app.use('/signup', createUser);
+app.use('/signin', login);
 app.use('*', urlDoesNotExist);
 app.listen(PORT);
