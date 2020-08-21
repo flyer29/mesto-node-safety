@@ -21,12 +21,6 @@ const urlDoesNotExist = (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 };
 
-/* const getTemporaryId = (req, res, next) => {
-  req.user = {
-    _id: '5f2980dc025e002380f12ec4',
-  };
-  next();
-}; */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());

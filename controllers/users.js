@@ -86,7 +86,9 @@ const updateProfile = (req, res) => {
       runValidators: true,
       upsert: true,
     })
-    .then((user) => res.send(user))
+    .then((user) => {
+      res.send(user);
+    })
     .catch((err) => {
       if (err._message === 'Validation failed') {
         res.status(400).send({ message: err.message });
@@ -98,7 +100,6 @@ const updateProfile = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
-
   User.findByIdAndUpdate(req.user._id, { avatar },
     {
       new: true,
