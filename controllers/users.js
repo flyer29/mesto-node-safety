@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const secretKey = 'a06963e97a290c279d1a6eedec59d9000a968e22fdcf239bdc5ec2b1a78b7cae';
+
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
@@ -63,7 +65,7 @@ const login = (req, res) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'some-secret-key',
+        secretKey,
         { expiresIn: '7d' },
       );
       res.cookie('jwt', token, {
