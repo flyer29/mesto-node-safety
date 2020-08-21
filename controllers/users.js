@@ -81,7 +81,6 @@ const login = (req, res) => {
 
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
-
   User.findByIdAndUpdate(req.user._id, { name, about },
     {
       new: true,

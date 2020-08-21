@@ -24,7 +24,6 @@ const urlDoesNotExist = (req, res) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-//  app.use(getTemporaryId);
 app.use('/cards', auth, cardsRouter);
 app.use('/users', auth, usersRouter);
 app.use('/signup', createUser);
