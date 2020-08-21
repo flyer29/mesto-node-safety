@@ -23,12 +23,17 @@ const createCard = (req, res) => {
 };
 
 const deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findById(req.params.id)
     .then((card) => {
       if (!card) {
         res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
         return;
       }
+      if (card.owner !== req.user._id) {
+        res.status(401).send({ message: 'Вы не можете удалить эту карточку' });
+        return;
+      }
+      card.remove();
       res.send({ message: 'Карточка успешно удалена' });
     })
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
