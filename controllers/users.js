@@ -58,6 +58,9 @@ const createUser = (req, res) => {
             res.status(400).send({ message: err.message });
             return;
           }
+          if (err.name === 'MongoError' && err.code === 11000) {
+            res.status(400).send({ message: 'Пользователь с таким email уже существует' });
+          }
           res.status(500).send({ message: 'На сервере произошла ошибка' });
         });
     })
@@ -82,10 +85,11 @@ const login = (req, res) => {
       }).end();
     })
     .catch((err) => {
-      if (err.name === 'MongoError') {
-        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      if (err.name === 'Error') {
+        res.status(401).send({ message: err.message });
+        return;
       }
-      res.status(401).send({ message: err.message });
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
