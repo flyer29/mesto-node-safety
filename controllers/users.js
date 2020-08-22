@@ -32,6 +32,9 @@ const createUser = (req, res) => {
     email,
     password,
   } = req.body;
+  if (password === undefined || password.length < 8) {
+    res.status(400).send({ message: 'Создайте валидный пароль' });
+  }
   bcrypt.hash(password, 10)
     .then((hash) => {
       User.create({
@@ -42,20 +45,24 @@ const createUser = (req, res) => {
         password: hash,
       })
         .then((user) => {
-          res.send(user);
+          res.send({
+            _id: user._id,
+            name: user.name,
+            about: user.about,
+            avatar: user.avatar,
+            email: user.email,
+          });
         })
         .catch((err) => {
-          if (err._message === 'user validation failed') {
+          if (err.name === 'ValidationError') {
             res.status(400).send({ message: err.message });
             return;
           }
-          if (err._message === '') {
-            res.status(500).send({ message: 'На сервере произошла ошибка' });
-          }
+          res.status(500).send({ message: 'На сервере произошла ошибка' });
         });
     })
     .catch((err) => {
-      res.send({ message: err });
+      res.status(500).send({ message: err.message });
     });
 };
 
@@ -75,6 +82,9 @@ const login = (req, res) => {
       }).end();
     })
     .catch((err) => {
+      if (err.name === 'MongoError') {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
+      }
       res.status(401).send({ message: err.message });
     });
 };
@@ -91,7 +101,7 @@ const updateProfile = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err._message === 'Validation failed') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
         return;
       }
@@ -109,7 +119,7 @@ const updateAvatar = (req, res) => {
     })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err._message === 'Validation failed') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
         return;
       }
