@@ -13,7 +13,7 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err._message === 'card validation failed') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
         return;
       }
