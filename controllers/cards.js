@@ -24,11 +24,14 @@ const createCard = (req, res) => {
 const deleteCardById = (req, res) => {
   Card.findById(req.params.id)
     .then((card) => {
+      console.log(card.owner);
+      console.log(req.user._id);
+      console.log(card);
       if (!card) {
         res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
         return;
       }
-      if (!card.owner === req.user._id) {
+      if (card.owner.toString() !== req.user._id.toString()) {
         res.status(403).send({ message: 'Вы не можете удалить эту карточку' });
         return;
       }
