@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const { key } = require('../config.js');
 
-const key = 'a06963e97a290c279d1a6eedec59d9000a968e22fdcf239bdc5ec2b1a78b7cae';
+// const key = 'a06963e97a290c279d1a6eedec59d9000a968e22fdcf239bdc5ec2b1a78b7cae';
 
 const auth = (req, res, next) => {
   if (!req.cookies.jwt) {
