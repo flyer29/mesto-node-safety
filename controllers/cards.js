@@ -37,7 +37,9 @@ const deleteCardById = (req, res) => {
     .then(() => {
       res.send({ message: 'Карточка успешно удалена' });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch(() => {
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const likeCard = (req, res) => {

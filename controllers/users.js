@@ -21,7 +21,13 @@ const getUserById = (req, res) => {
       }
       res.send(user);
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const createUser = (req, res) => {
