@@ -24,9 +24,6 @@ const createCard = (req, res) => {
 const deleteCardById = (req, res) => {
   Card.findById(req.params.id)
     .then((card) => {
-      console.log(card.owner);
-      console.log(req.user._id);
-      console.log(card);
       if (!card) {
         res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
         return;
