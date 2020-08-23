@@ -5,7 +5,9 @@ const getAllCards = (req, res) => {
     .then((cards) => {
       res.send({ data: cards });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch(() => {
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const createCard = (req, res) => {
@@ -24,22 +26,22 @@ const createCard = (req, res) => {
 const deleteCardById = (req, res) => {
   Card.findById(req.params.id)
     .then((card) => {
-      if (!card) {
-        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
-        return;
-      }
       if (card.owner.toString() !== req.user._id.toString()) {
         res.status(403).send({ message: 'Вы не можете удалить эту карточку' });
         return;
       }
-      card.remove();
-    })
-    .then(() => {
-      res.send({ message: 'Карточка успешно удалена' });
+      Card.deleteOne(card)
+        .then(() => {
+          res.send({ message: 'Карточка успешно удалена' });
+        })
+        .catch(() => {
+          res.status(500).send({ message: 'На сервере произошла ошибка' });
+        });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+        return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
