@@ -3,8 +3,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { passwordSchema, key } = require('../config.js');
 
-// const secretKey = 'a06963e97a290c279d1a6eedec59d9000a968e22fdcf239bdc5ec2b1a78b7cae';
-
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => {
