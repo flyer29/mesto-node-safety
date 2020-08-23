@@ -37,7 +37,10 @@ const deleteCardById = (req, res) => {
     .then(() => {
       res.send({ message: 'Карточка успешно удалена' });
     })
-    .catch(() => {
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+      }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -55,7 +58,12 @@ const likeCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const dislikeCard = (req, res) => {
@@ -71,7 +79,12 @@ const dislikeCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 module.exports = {
