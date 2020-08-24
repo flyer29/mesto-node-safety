@@ -26,6 +26,10 @@ const createCard = (req, res) => {
 const deleteCardById = (req, res) => {
   Card.findById(req.params.id)
     .then((card) => {
+      if (!card) {
+        res.status(404).send({ message: 'Карточка не найдена' });
+        return;
+      }
       if (card.owner.toString() !== req.user._id.toString()) {
         res.status(403).send({ message: 'Вы не можете удалить эту карточку' });
         return;
@@ -63,6 +67,7 @@ const likeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+        return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
@@ -84,6 +89,7 @@ const dislikeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+        return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
