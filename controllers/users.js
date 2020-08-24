@@ -38,7 +38,7 @@ const createUser = (req, res) => {
     password,
   } = req.body;
   if (password === undefined || !passwordSchema.validate(password)) {
-    res.status(400).send({ message: 'Создайте валидный пароль' });
+    res.status(400).send({ message: 'Необходимо указать корректный пароль' });
     return;
   }
   bcrypt.hash(password, 10)
