@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 const cardsRouter = require('./routes/cards.js');
 const usersRouter = require('./routes/users.js');
 const { createUser, login } = require('./controllers/users.js');
@@ -21,6 +22,7 @@ const urlDoesNotExist = (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
 };
 
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
