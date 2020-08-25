@@ -65,7 +65,7 @@ const createUser = (req, res) => {
             return;
           }
           if (err.name === 'MongoError' && err.code === 11000) {
-            res.status(400).send({ message: 'Пользователь с таким email уже существует' });
+            res.status(409).send({ message: 'Пользователь с таким email уже существует' });
             return;
           }
           res.status(500).send({ message: 'На сервере произошла ошибка' });
