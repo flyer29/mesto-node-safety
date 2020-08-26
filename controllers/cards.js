@@ -5,16 +5,17 @@ const getAllCards = (req, res) => {
     .then((cards) => {
       res.send({ data: cards });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch(() => {
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
-
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err._message === 'card validation failed') {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: err.message });
         return;
       }
@@ -23,15 +24,31 @@ const createCard = (req, res) => {
 };
 
 const deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
+  Card.findById(req.params.id)
     .then((card) => {
       if (!card) {
-        res.status(404).send({ message: 'Запрашиваемая карточка не найдена' });
+        res.status(404).send({ message: 'Карточка не найдена' });
         return;
       }
-      res.send({ message: 'Карточка успешно удалена' });
+      if (card.owner.toString() !== req.user._id.toString()) {
+        res.status(403).send({ message: 'Вы не можете удалить эту карточку' });
+        return;
+      }
+      Card.deleteOne(card)
+        .then(() => {
+          res.send({ message: 'Карточка успешно удалена' });
+        })
+        .catch(() => {
+          res.status(500).send({ message: 'На сервере произошла ошибка' });
+        });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const likeCard = (req, res) => {
@@ -47,7 +64,13 @@ const likeCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 const dislikeCard = (req, res) => {
@@ -63,7 +86,13 @@ const dislikeCard = (req, res) => {
       }
       res.send({ data: card });
     })
-    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Ошибка валидации переданного идентификатора' });
+        return;
+      }
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
 };
 
 module.exports = {
